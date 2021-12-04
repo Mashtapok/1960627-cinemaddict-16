@@ -1,9 +1,10 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import {createElement} from '../utils/render';
 
 dayjs.extend(duration);
 
-export const createFilmCardTemplate = ({
+const createFilmCardTemplate = ({
   title,
   totalRating,
   release,
@@ -49,3 +50,28 @@ export const createFilmCardTemplate = ({
           </div>
         </article>`;
 };
+
+export default class FilmCardView {
+  #element = null;
+  #film = null;
+
+  constructor(film) {
+    this.#film = film;
+  }
+
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFilmCardTemplate(this.#film);
+  }
+
+  remove() {
+    this.#element = null;
+  }
+}

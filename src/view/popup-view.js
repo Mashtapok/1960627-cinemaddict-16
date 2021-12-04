@@ -1,7 +1,8 @@
 import { humanizePopupRealiseDate } from '../utils';
-import {createCommentTemplate} from './comment-view';
+import CommentView from './comment-view';
+import {createElement} from '../utils/render';
 
-export const createPopupTemplate = ({
+const createPopupTemplate = ({
   title,
   totalRating,
   release,
@@ -107,7 +108,7 @@ export const createPopupTemplate = ({
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
-          ${comments.map((comment) => createCommentTemplate(comment)).join('')}
+          ${comments.map((comment) => new CommentView(comment).template).join('')}
         </ul>
 
         <div class="film-details__new-comment">
@@ -144,3 +145,28 @@ export const createPopupTemplate = ({
   </form>
 </section>`;
 };
+
+export default class PopupView {
+  #element = null;
+  #film = null;
+
+  constructor(film) {
+    this.#film = film;
+  }
+
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createPopupTemplate(this.#film);
+  }
+
+  remove() {
+    this.#element = null;
+  }
+}
