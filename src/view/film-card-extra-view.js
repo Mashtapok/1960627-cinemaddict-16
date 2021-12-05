@@ -1,4 +1,6 @@
-export const createFilmCardExtraTemplate = () => (
+import {createElement} from '../utils/render';
+
+const createFilmCardExtraTemplate = () => (
   `<section class="films-list films-list--extra">
       <h2 class="films-list__title">Top rated</h2>
 
@@ -45,3 +47,23 @@ export const createFilmCardExtraTemplate = () => (
       </div>
     </section>`
 );
+
+export default class FilmCardExtraView {
+  #element = null;
+
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createFilmCardExtraTemplate();
+  }
+
+  remove() {
+    this.#element = null;
+  }
+}

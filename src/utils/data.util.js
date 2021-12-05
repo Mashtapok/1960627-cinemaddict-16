@@ -1,4 +1,3 @@
-// Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 import dayjs from 'dayjs';
 
 export const getRandomInteger = (min = 0, max = 1) => {

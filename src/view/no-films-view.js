@@ -1,16 +1,14 @@
 import {createElement} from '../utils/render';
 
-const createContentTemplate = () => (
+const createNoFilmsTemplate = () => (
   `<section class="films">
     <section class="films-list">
-      <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-
-      <div class="films-list__container"></div>
+       <h2 class="films-list__title">There are no movies in our database</h2>
     </section>
   </section>`
 );
 
-export default class ContentView {
+export default class NoFilmsView {
   #element = null;
 
   get element() {
@@ -22,7 +20,7 @@ export default class ContentView {
   }
 
   get template() {
-    return createContentTemplate();
+    return createNoFilmsTemplate();
   }
 
   remove() {

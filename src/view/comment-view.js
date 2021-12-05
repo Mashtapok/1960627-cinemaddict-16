@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
+import {createElement} from '../utils/render';
 
-export const createCommentTemplate = (comment) => `<li class="film-details__comment">
+const createCommentTemplate = (comment) => (`<li class="film-details__comment">
             <span class="film-details__comment-emoji">
               <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
             </span>
@@ -12,4 +13,29 @@ export const createCommentTemplate = (comment) => `<li class="film-details__comm
                 <button class="film-details__comment-delete">Delete</button>
               </p>
             </div>
-          </li>`;
+          </li>`);
+
+export default class CommentView {
+  #element = null;
+  #comment = null;
+
+  constructor(comment) {
+    this.#comment = comment;
+  }
+
+  get element() {
+    if(!this.#element) {
+      this.#element = createElement(this.template);
+    }
+
+    return this.#element;
+  }
+
+  get template() {
+    return createCommentTemplate(this.#comment);
+  }
+
+  remove() {
+    this.#element = null;
+  }
+}
