@@ -1,5 +1,5 @@
 import FilterView from './filter-view';
-import {createElement} from '../utils/render';
+import AbstractView from './abstract-view';
 
 const createNavigationTemplate = (filters) => {
   const filtersTemplate = filters.map((filter) => new FilterView(filter).template).join('');
@@ -12,27 +12,15 @@ const createNavigationTemplate = (filters) => {
   </nav>`;
 };
 
-export default class NavigationView {
-  #element = null;
+export default class NavigationView extends AbstractView {
   #filters = null;
 
   constructor(filters) {
+    super();
     this.#filters = filters;
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createNavigationTemplate(this.#filters);
-  }
-
-  remove() {
-    this.#element = null;
   }
 }
