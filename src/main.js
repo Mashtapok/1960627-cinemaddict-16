@@ -10,6 +10,7 @@ import LoadMoreButtonView from './view/load-more-button-view';
 import FilmCardExtraView from './view/film-card-extra-view';
 import PopupView from './view/popup-view';
 import NoFilmsView from './view/no-films-view';
+import {remove} from './utils/render';
 
 const FILMS_COUNT = 12;
 const FILMS_LOAD_STEP = 5;
@@ -24,32 +25,29 @@ const bodyElement = document.querySelector('body');
 const siteFooterStatisticsElement = siteFooterElement.querySelector('.footer__statistics');
 
 const renderLayout = () => {
-  render(siteHeaderElement, new HeaderProfileView().element, RenderPosition.BEFOREEND);
-  render(siteMainElement, new SortView().element, RenderPosition.AFTERBEGIN);
-  render(siteMainElement, new NavigationView(filters).element, RenderPosition.AFTERBEGIN);
-  render(siteFooterStatisticsElement, new FooterStatisticsView(films.length).element, RenderPosition.BEFOREEND);
+  render(siteHeaderElement, new HeaderProfileView(), RenderPosition.BEFOREEND);
+  render(siteMainElement, new SortView(), RenderPosition.AFTERBEGIN);
+  render(siteMainElement, new NavigationView(filters), RenderPosition.AFTERBEGIN);
+  render(siteFooterStatisticsElement, new FooterStatisticsView(films.length), RenderPosition.BEFOREEND);
 };
 
 const renderBoard = () => {
   if(films.length === 0) {
-    render(siteMainElement, new NoFilmsView().element, RenderPosition.BEFOREEND);
+    render(siteMainElement, new NoFilmsView(), RenderPosition.BEFOREEND);
   } else {
-    render(siteMainElement, new ContentView().element, RenderPosition.BEFOREEND);
+    render(siteMainElement, new ContentView(), RenderPosition.BEFOREEND);
 
     const filmsContainerElement = siteMainElement.querySelector('.films-list__container');
     const filmsListElement = siteMainElement.querySelector('.films-list');
 
     const renderPopup = (film) => {
       const popupComponent = new PopupView(film);
-      const closePopupBtnElement = popupComponent.element.querySelector('.film-details__close-btn');
 
-      render(bodyElement, popupComponent.element, RenderPosition.BEFOREEND);
+      render(bodyElement, popupComponent, RenderPosition.BEFOREEND);
 
       const onClosePopup = () => {
-        closePopupBtnElement.removeEventListener('click', onClosePopup);
         bodyElement.classList.remove('hide-overflow');
-        popupComponent.element.remove();
-        popupComponent.remove();
+        remove(popupComponent);
       };
 
       const onEscKeyDown = (event) => {
@@ -60,21 +58,20 @@ const renderBoard = () => {
         }
       };
 
-      closePopupBtnElement.addEventListener('click', onClosePopup);
+      popupComponent.setClosePopupClickHandler(onClosePopup);
       document.addEventListener('keydown', onEscKeyDown);
     };
 
     const renderFilm = (containerElement, film) => {
       const filmComponent = new FilmCardView(film);
-      const filmLinkElement = filmComponent.element.querySelector('.film-card__link');
-      render(containerElement, filmComponent.element, RenderPosition.BEFOREEND);
+      render(containerElement, filmComponent, RenderPosition.BEFOREEND);
 
       const onOpenPopup = () => {
         bodyElement.classList.add('hide-overflow');
         renderPopup(film);
       };
 
-      filmLinkElement.addEventListener('click', onOpenPopup);
+      filmComponent.setOpenPopupClickHandler(onOpenPopup);
     };
 
     for (let i = 0; i < Math.min(films.length, FILMS_LOAD_STEP); i++) {
@@ -86,9 +83,9 @@ const renderBoard = () => {
 
       const loadMoreButtonComponent = new LoadMoreButtonView();
 
-      render(filmsListElement, loadMoreButtonComponent.element, RenderPosition.BEFOREEND);
+      render(filmsListElement, loadMoreButtonComponent, RenderPosition.BEFOREEND);
 
-      loadMoreButtonComponent.element.addEventListener('click', () => {
+      const onLoadMore = () => {
         films
           .slice(renderedFilmsCount, renderedFilmsCount + FILMS_LOAD_STEP)
           .forEach((film) => renderFilm(filmsContainerElement, film));
@@ -96,14 +93,15 @@ const renderBoard = () => {
         renderedFilmsCount += FILMS_LOAD_STEP;
 
         if (renderedFilmsCount >= films.length) {
-          loadMoreButtonComponent.element.remove();
-          loadMoreButtonComponent.remove();
+          remove(loadMoreButtonComponent);
         }
-      });
+      };
+
+      loadMoreButtonComponent.setLoadMoreClickHandler(onLoadMore);
     }
 
     for (let i = 0; i < 2; i++) {
-      render(filmsListElement, new FilmCardExtraView().element, RenderPosition.AFTEREND);
+      render(filmsListElement, new FilmCardExtraView(), RenderPosition.AFTEREND);
     }
   }
 };

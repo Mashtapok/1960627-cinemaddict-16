@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import {createElement} from '../utils/render';
+import AbstractView from './abstract-view';
 
 dayjs.extend(duration);
 
@@ -51,27 +51,25 @@ const createFilmCardTemplate = ({
         </article>`;
 };
 
-export default class FilmCardView {
-  #element = null;
+export default class FilmCardView extends AbstractView {
   #film = null;
 
   constructor(film) {
+    super();
     this.#film = film;
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createFilmCardTemplate(this.#film);
   }
 
-  remove() {
-    this.#element = null;
+  setOpenPopupClickHandler = (callback) => {
+    this._callback.openClick = callback;
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#openPopupClickHandler);
+  }
+
+  #openPopupClickHandler = (event) => {
+    event.preventDefault();
+    this._callback.openClick();
   }
 }

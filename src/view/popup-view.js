@@ -1,6 +1,6 @@
 import { humanizePopupRealiseDate } from '../utils';
 import CommentView from './comment-view';
-import {createElement} from '../utils/render';
+import AbstractView from './abstract-view';
 
 const createPopupTemplate = ({
   title,
@@ -146,27 +146,25 @@ const createPopupTemplate = ({
 </section>`;
 };
 
-export default class PopupView {
-  #element = null;
+export default class PopupView extends AbstractView {
   #film = null;
 
   constructor(film) {
+    super();
     this.#film = film;
-  }
-
-  get element() {
-    if(!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get template() {
     return createPopupTemplate(this.#film);
   }
 
-  remove() {
-    this.#element = null;
+  setClosePopupClickHandler = (callback) => {
+    this._callback.closeClick = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closePopupClickHandler);
+  }
+
+  #closePopupClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.closeClick();
   }
 }
