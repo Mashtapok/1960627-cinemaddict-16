@@ -38,6 +38,7 @@ const generatePoster = () => {
 };
 
 export const generateFilm = () => ({
+  id: getRandomInteger(0, 99999),
   title: generateTitle(),
   description: generateDescription(),
   poster: generatePoster(),
@@ -54,7 +55,7 @@ export const generateFilm = () => ({
     'Morgan Freeman', 'Leonardo DiCaprio'
   ],
   release: {
-    'date': new Date(`11 11 19${getRandomInteger(21, 99)}`),
+    date: new Date(`11 11 19${getRandomInteger(21, 99)}`),
     'release_country': 'Finland'
   },
   genre: [

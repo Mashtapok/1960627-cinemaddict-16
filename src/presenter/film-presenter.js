@@ -1,49 +1,60 @@
 import FilmCardView from '../view/film-card-view';
-import ContentView from '../view/content-view';
-import LoadMoreButtonView from '../view/load-more-button-view';
+import PopupView from '../view/popup-view';
+import {render, RenderPosition} from '../utils';
+import {remove} from '../utils/render';
 
-export default class BoardPresenter {
-  #contentContainer = null;
 
-  #filmCardComponent = new FilmCardView();
-  #contentComponent = new ContentView();
-  #loadMoreButtonComponent = new LoadMoreButtonView();
+export default class FilmPresenter {
+  #bodyElement = document.querySelector('body');
 
-  #films = [];
+  #filmListContainer = null;
+  #filmComponent = null;
+  #popupComponent = null;
 
-  constructor(contentContainer) {
-    this.#contentContainer = contentContainer;
+  #film = null;
+
+  constructor(filmListContainer, film) {
+    this.#filmListContainer = filmListContainer;
+    this.#popupComponent = new PopupView(film);
   }
 
-  init = (films) => {
-    this.#films = [...films];
-    // Метод для инициализации (начала работы) модуля,
+  init = (film) => {
+    this.#film = film;
+
+    this.#filmComponent = new FilmCardView(film);
+
+    render(this.#filmListContainer, this.#filmComponent, RenderPosition.BEFOREEND);
+
+    this.#filmComponent.setOpenPopupClickHandler(this.#handleOpenPopup);
   }
 
-  #renderSort = () => {
-    // Метод для рендеринга сортировки
+  destroy = () => {
+    remove(this.#filmComponent);
+    remove(this.#popupComponent);
   }
 
-  #renderFilm = () => {
-    // Метод, куда уйдёт логика созданию и рендерингу компонетов фильма,
-    // текущая функция renderFilm в main.js
-  }
+  #renderPopup = () => {
+    render(this.#bodyElement, this.#popupComponent, RenderPosition.BEFOREEND);
 
-  #renderFilms = () => {
-    // Метод для рендеринга N-фильмов за раз
-  }
+    const onClosePopup = () => {
+      this.#bodyElement.classList.remove('hide-overflow');
+      remove(this.#popupComponent);
+    };
 
-  #renderNoFilms = () => {
-    // Метод для рендеринга заглушки
-  }
+    const onEscKeyDown = (event) => {
+      if (event.key === 'Esc' || event.key === 'Escape') {
+        event.preventDefault();
+        onClosePopup();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
 
-  #renderLoadMoreButton = () => {
-    // Метод, куда уйдёт логика по отрисовке кнопки допоказа,
-    // сейчас в main.js является частью renderBoard
-  }
+    this.#popupComponent.setClosePopupClickHandler(onClosePopup);
+    document.addEventListener('keydown', onEscKeyDown);
+  };
 
-  #renderBoard = () => {
-    // Метод для инициализации (начала работы) модуля,
-    // бОльшая часть текущей функции renderBoard в main.js
-  }
+  #handleOpenPopup = () => {
+    this.#bodyElement.classList.add('hide-overflow');
+    this.#renderPopup();
+  };
 }

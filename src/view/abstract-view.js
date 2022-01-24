@@ -22,7 +22,7 @@ export default class AbstractView {
     throw new Error('Abstract method not implemented: get template');
   }
 
-  remove() {
+  removeElement() {
     this.#element = null;
   }
 }
